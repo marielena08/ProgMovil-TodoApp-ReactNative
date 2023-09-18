@@ -1,0 +1,134 @@
+import React, { useState } from 'react';
+import {View, TextInput, Text, Image, Button, StyleSheet } from 'react-native';
+import logo from '../../imagenes/Logo1.png';
+
+export const validarEmailInput = (email) => {
+  const arroba = (email.match(/@/g) || []).length;
+  const puntos = (email.match(/\./g) || []).length;
+
+  if (arroba !== 1 || puntos >= 2) {
+    return { isValid: false, message: "Error" };
+  } else {
+    return { isValid: true };
+  }
+};
+
+function SignUp({goToLogin}) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessageEmail, setErrorMessageEmail] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const validarUsernameInput = (text) => {
+    if (/[^a-zA-Z\s]/.test(text)) {
+      setErrorMessage("Solo se permiten letras");
+      setIsFormValid(false);
+    } else {
+      setErrorMessage("");
+      setName(text);
+      setIsFormValid(true);
+    }
+  };
+
+  const validar = (text) => {
+    const resultado = validarEmailInput(text);
+    if (!resultado.isValid) {
+      setErrorMessageEmail(resultado.message);
+      setIsFormValid(false);
+    } else {
+      setErrorMessageEmail("");
+      setEmail(text);
+      setIsFormValid(true);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Image source={logo} style={styles.logo} />
+      <Text style={styles.title}>SIGN UP</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="NAME"
+        onChangeText={validarUsernameInput}
+      />
+      <Text style={styles.errorMessage}>{errorMessage}</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="EMAIL"
+        onChangeText={validar}
+      />
+      <Text style={styles.errorMessage}>{errorMessageEmail}</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="PASSWORD"
+        secureTextEntry
+        onChangeText={(text) => setPassword(text)}
+      />
+      <Button
+        title="SIGN UP"
+        disabled={!isFormValid}
+        onPress={() => {
+          console.log("Name:", name);
+          console.log("Email:", email);
+          console.log("Password:", password);
+        }}
+      />
+    <TouchableOpacity onPress={goToLogin}>
+      <Text style={styles.loginLink}>LOGIN</Text>
+    </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    width: '30%',        
+    height: '40%', 
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#afb5c2',
+    flexDirection: 'column',
+    padding: 20,
+    borderRadius: 10,
+    backgroundImage: {
+      ...StyleSheet.absoluteFillObject,
+      width: undefined,  
+      height: undefined, 
+      resizeMode: 'cover', 
+    },
+    marginVertical: '15%', 
+    marginHorizontal: '30%', 
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  input: {
+    width: '80%',
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'gray',
+    margin: 10,
+    paddingLeft: 8,
+    borderRadius: 4,
+  },
+  errorMessage: {
+    color: 'red',
+    fontSize: 12,
+    fontWeight: 'bold'
+  },
+  loginLink: {
+    marginTop: 20,
+    color: 'blue',
+  },
+});
+
+export default SignUp;

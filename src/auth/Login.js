@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, Image, Button, StyleSheet , TouchableOpacity} from 'react-native';
 import logo from '../../imagenes/Logo1.png';
-import fondo from '../../imagenes/fondo.jpg';
 
-function Login({goToSignUp}) {
-  const [email, setEmail] = useState('');  // Nuevo estado para el email
+function Login() {
+  const [email, setEmail] = useState(''); 
   const [errorMessageEmail, setErrorMessageEmail] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [password, setPassword] = useState('');
@@ -32,7 +31,6 @@ function Login({goToSignUp}) {
 
   return (
     <View style={styles.container}>
-      <Image source={fondo} style={styles.backgroundImage} />
       <Image source={logo} style={styles.logo} />
       <Text style={styles.title}>LOGIN</Text>
       <TextInput style={styles.input} placeholder="LOGIN" onChangeText={validarEmailInput}/>
@@ -49,12 +47,11 @@ function Login({goToSignUp}) {
     />
     <Button title="LOGIN" 
       onPress={() => {
-        console.log("Login:", email);  
-        console.log("Password:", password);
+     
       }}
       disabled={!isFormValid} 
     /> 
-    <TouchableOpacity onPress={goToSignUp}>
+    <TouchableOpacity onPress={() => navigation.navigate('ForgotPass')}>
       <Text style={styles.forgotPassword}>¿FORGOT PASSWORD?</Text>
     </TouchableOpacity>
     </View>
@@ -63,10 +60,10 @@ function Login({goToSignUp}) {
 
 const styles = StyleSheet.create({
   container: {
-    width: '50%',  
-    maxWidth: 400,      
-    height: '60%', 
-    maxHeight: 400,
+    width: 400,
+    maxWidth: 500,      
+    height: '50%', 
+    maxHeight: 500,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -76,8 +73,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundImage: {
       ...StyleSheet.absoluteFillObject,
-      width: undefined,  
-      height: undefined, 
+      width: 100,  
+      height: 100, 
       resizeMode: 'cover', 
     },
     marginVertical: '5%', 
@@ -100,6 +97,16 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingLeft: 8,
     borderRadius: 4,
+  },
+  button: {
+    backgroundColor: 'blue',
+    borderRadius: 5,
+    padding: 10,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
   },
   errorMessage: {
     color: 'red',

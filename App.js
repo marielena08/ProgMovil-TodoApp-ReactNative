@@ -1,33 +1,27 @@
 import React, { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
+// import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
+import AppNavigator from './AppNavigator';
 import Login from './src/auth/Login';
 import SignUp from './src/auth/SignUp';
+import ForgotPass from './src/auth/ForgotPassword';
+import ChangePass from './src/auth/ChangePass';
+import Homepage from '/src/auth/Homepage';
 
 export default function App() {
 
     return (
     <View style={styles.container}>
-      <Login />
-      {/* <Signup /> */}
-      <StatusBar style="auto" />
+      {/* <AppNavigator/> */}
+      {/* <Login /> */}
+      {/* <ForgotPass /> */}
+      {/* <ChangePass /> */}
+      {/* <SignUp /> */}
+      <Homepage />
+      {/* <StatusBar style="auto" /> */}
     </View>
   );
-
-  // const [currentScreen, setCurrentScreen] = useState('Login','SignUp');
-  // // const [currentScreen, setCurrentScreen] = useState('SignUp');
-
-  // if (currentScreen === 'Login') {
-  //   return <Login goToSignUp={() => setCurrentScreen('SignUp')} />;
-  // }
-  //  else if (currentScreen === 'SignUp') {
-  //   return <SignUp goToLogin={() => setCurrentScreen('Login')} />;
-  // }
-
-  // return null;
-
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -37,3 +31,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+

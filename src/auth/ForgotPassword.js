@@ -1,221 +1,123 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, Button, FlatList, TouchableOpacity, StyleSheet, CheckBox, Modal } from 'react-native';
-import EditModal from './EditModal'; 
+import { View, Text, Image, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import logo from '../../imagenes/Logo1.png';
 
-function Homepage() {
-  const [inputText, setInputText] = useState("");
-  const [items, setItems] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [confirmationVisible, setConfirmationVisible] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState(null);
+function ForgotPass() {
 
-  const addItem = () => {
-    if (inputText.trim() !== "") {
-      setItems([...items, { text: inputText, id: Date.now() }]);
-      setInputText("");
+  const [email, setEmail] = useState("");
+  const [errorMessageEmail, setErrorMessageEmail] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const validarEmailInput = (email) => {
+    const arroba = (email.match(/@/g) || []).length;
+    const puntos = (email.match(/\./g) || []).length;
+
+    if (arroba !== 1) {
+      setErrorMessageEmail("El email debe contener un solo '@'");
+      setIsFormValid(false);
+    } else if (puntos >= 2) {
+      setErrorMessageEmail("El email debe contener máximo 2 puntos");
+      setIsFormValid(false);
+    } else {
+      setErrorMessageEmail("");
+      if (email && email.includes('@') && email.includes('.')) {
+        setIsFormValid(true);
+      }
     }
+    setEmail(email);
   };
 
-  const showDeleteConfirmation = (item) => {
-    setItemToDelete(item);
-    setConfirmationVisible(true);
+  const handleReset = () => {
+    setEmail("");
   };
-
-  const confirmDeleteItem = () => {
-    if (itemToDelete) {
-      const updatedItems = items.filter((item) => item.id !== itemToDelete.id);
-      setItems(updatedItems);
-    }
-    setConfirmationVisible(false);
-  };
-
-  const editItem = (newText) => {
-    if (selectedItem && newText.trim() !== "") {
-      const updatedItems = items.map((item) =>
-        item.id === selectedItem.id ? { ...item, text: newText } : item
-      );
-      setItems(updatedItems);
-      setSelectedItem(null);
-      setModalVisible(false); 
-    }
-  };
-
-  const renderItem = ({ item }) => (
-    <View style={styles.listItem}>
-        <CheckBox />
-        <Text style={styles.listItemText}>{item.text}</Text>
-        <TouchableOpacity
-        style={styles.editButton}
-        onPress={() => {
-            setInputText(item.text);
-            setSelectedItem(item);
-            setModalVisible(true); 
-        }}
-        >
-        <Text style={styles.editButtonText}>Editar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => showDeleteConfirmation(item)}
-        >
-        <Text style={styles.deleteButtonText}>Eliminar</Text>
-        </TouchableOpacity>
-    </View>
-  );
 
   return (
     <View style={styles.container}>
-        <Text style={styles.confirmationText}>TODO APP</Text>
+      <View style={styles.logoContainer}>
         <Image source={logo} style={styles.logo} />
-        <View style={styles.inputContainer}>
-            <TextInput
-                style={styles.input}
-                placeholder="Ingrese una tarea nueva"
-                onChangeText={(text) => setInputText(text)}
-                value={inputText}
-            />
-            <TouchableOpacity
-                style={styles.addButton}
-                onPress={addItem}
-            >
-                <Text style={styles.addButtonText}>Añadir</Text>
-            </TouchableOpacity>
-        </View>
-        <FlatList
-            data={items}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-            style={styles.listContainer}
-        />
-        <EditModal
-            visible={modalVisible}
-            onClose={() => {
-            setInputText("");
-            setModalVisible(false);
-            }}
-            onSave={editItem}
-            initialText={selectedItem ? selectedItem.text : ""}
-        />
-        <Modal
-            transparent={true}
-            visible={confirmationVisible}
-            onRequestClose={() => setConfirmationVisible(false)}
-        >
-        <View style={styles.confirmationContainer}>
-            <Text style={styles.confirmationText}>¿Desea eliminar esta tarea?</Text>
-            <View style={styles.buttonContainer}>
-                <Button title="Confirmar" onPress={confirmDeleteItem} />
-                <View style={styles.buttonSpacer} />
-                <Button title="Cancelar" onPress={() => setConfirmationVisible(false)} />
-            </View>
-        </View>
-      </Modal>
+      </View>
+      <Text style={styles.titulo}>FORGOT PASSWORD</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="EMAIL"
+        onChangeText={validarEmailInput}
+        value={email} 
+      />
+      <Text style={styles.errorMessage}>{errorMessageEmail}</Text>
+
+      <TouchableOpacity
+        style={[styles.button, !isFormValid && styles.disabledButton]}
+        onPress={handleReset}
+        disabled={!isFormValid}>
+        <Text style={styles.buttonText}>SEND</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={styles.loginLink}>LOGIN</Text>
+      </TouchableOpacity>
     </View>
   );
 }
-const styles = StyleSheet.create({
-    container: {
-      width: '60%',
-      maxWidth: 500,
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#7FC19D',
-      flexDirection: 'column',
-      padding: 10,
-      borderRadius: 10,
-      marginVertical: '5%',
-      marginHorizontal: '10%',
-    },
-    logo: {
-        width: 100,
-        height: 100,
-        marginBottom: 20,
-    },
-    inputContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 8,
-    },
-    input: {
-      flex: 1,
-      height: 50,
-      borderColor: 'gray',
-      borderWidth: 1,
-      paddingHorizontal: 8,
-      borderRadius: 4,
-      marginRight: 8,
-      width: '100%',
-    },
-    addButton: {
-      height: 50,
-      backgroundColor: '#F05A0A',
-      padding: 10,
-      borderRadius: 4,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    addButtonText: {
-      color: 'white',
-    },
-    listItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      backgroundColor: 'white',
-      padding: 8,
-      marginBottom: 8,
-      borderRadius: 4,
-    },
-    listItemText: {
-      flex: 1,
-      marginLeft: 8,
-    },
-    editButton: {
-      backgroundColor: '#E86F03',
-      padding: 4,
-      marginRight: 4,
-      borderRadius: 4,
-    },
-    editButtonText: {
-      color: 'white',
-    },
-    deleteButton: {
-      backgroundColor: '#E86F03',
-      padding: 4,
-      borderRadius: 4,
-    },
-    deleteButtonText: {
-      color: 'white',
-    },
-    listContainer: {
-      flex: 1,
-      width: '100%',
-    },
-    confirmationContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      padding: 20,
-      borderRadius: 10,
-    },
-    confirmationText: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginBottom: 10,
-      textAlign: 'center',
-    },
-    buttonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-    },
-    buttonSpacer: {
-      width: 10,
-    },
-  });
 
-export default Homepage;
+const styles = StyleSheet.create({
+  container: {
+    width: '60%',
+    maxWidth: 400,
+    height: '60%',
+    maxHeight: 400,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#7FC19D',
+    flexDirection: 'column',
+    padding: 10,
+    borderRadius: 10,
+    marginVertical: '5%',
+    marginHorizontal: '10%',
+  },
+  logoContainer: {
+    marginBottom: 10,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+  },
+  titulo: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  input: {
+    width: '80%',
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'gray',
+    margin: 10,
+    paddingLeft: 8,
+    borderRadius: 4,
+  },
+  errorMessage: {
+    color: 'red',
+    fontSize: 12,
+    fontWeight: 'bold'
+  },
+  button: {
+    backgroundColor: 'blue',
+    borderRadius: 5,
+    padding: 10,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  disabledButton: {
+    backgroundColor: 'gray', 
+  },
+  loginLink: {
+    marginTop: 20,
+    color: 'blue',
+  },
+});
+
+export default ForgotPass;
+
